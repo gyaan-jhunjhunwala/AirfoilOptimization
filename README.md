@@ -2,13 +2,13 @@
 This is an interactive Streamlit web application designed to compute, analyze, and optimize NACA 4-digit airfoil geometries.
 The dashboard integrates aerodynamic backends with mathematical optimization algorithms (SLSQP) to find ideal airfoil parameters for specific flight conditions in real-time.
 
-## 🚀 Features
+## Features
 * **Dynamic Geometry Generation:** Live rendering of NACA 4-digit airfoils using cosine spacing for enhanced resolution at the leading and trailing edges.
 * **Performance Sweeps:** Automated angle of attack sweeps to analyze lift-to-drag ratios across custom ranges.
 * **Mathematical Optimization:** Integrated scipy.optimize pipeline to maximize the lift-to-drag ratio based on user-defined constraints (thickness, camber, and flight envelope restrictions).
 * **Polished UI/UX:** Clean, responsive dark-themed dashboard built entirely with Streamlit and custom CSS layout components.
 
-## 🛠️ Installation & Setup
+## Installation & Setup
 To run this dashboard locally, ensure you have Python 3.8+ installed, then follow these steps:
 1. **Clone the repository:**
 ```
