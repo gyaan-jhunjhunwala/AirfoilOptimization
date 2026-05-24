@@ -1,5 +1,5 @@
 # ✈️ Aerodynamic Airfoil Optimization Dashboard
-This is an interactive Streamlit web application designed to compute, analyze, and optimize NACA 4-digit airfoil geometries.
+This is an interactive Streamlit web application designed to compute, analyze, and optimize NACA 4-digit airfoil geometries using NeuralFoil.
 The dashboard integrates aerodynamic backends with mathematical optimization algorithms (SLSQP) to find ideal airfoil parameters for specific flight conditions in real-time.
 
 ## Features
