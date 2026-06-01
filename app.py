@@ -391,7 +391,7 @@ APP_PRESETS = {
 }
 
 with st.sidebar:
-    st.markdown("### ✈️ Aircraft Application Target")
+    st.markdown("### ✈️ Aircraft Presets")
     selected_preset = st.radio(
         "Choose an aircraft profile preset:",
         options=list(APP_PRESETS.keys()),
