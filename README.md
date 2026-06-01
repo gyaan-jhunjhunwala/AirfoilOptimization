@@ -3,6 +3,7 @@ This is an interactive Streamlit web application designed to compute, analyze, a
 The dashboard integrates aerodynamic backends with mathematical optimization algorithms (SLSQP) to find ideal airfoil parameters for specific flight conditions in real-time.
 
 ## Features
+* **NEW! Aircraft Presets:** Domain-specific targets that automatically set realistic slider ranges and design parameters.  
 * **Dynamic Geometry Generation:** Live rendering of NACA 4-digit airfoils using cosine spacing for enhanced resolution at the leading and trailing edges.
 * **Performance Sweeps:** Automated angle of attack sweeps to analyze lift-to-drag ratios across custom ranges.
 * **Mathematical Optimization:** Integrated scipy.optimize pipeline to maximize the lift-to-drag ratio based on user-defined constraints (thickness, camber, and flight envelope restrictions).
