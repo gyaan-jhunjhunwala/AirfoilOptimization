@@ -18,7 +18,7 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght=300;400;600;800&family=Space+Grotesk:wght=300;500;700&display=swap');
     
     html, body, [class*="css"] {
         font-family: 'Outfit', sans-serif;
@@ -267,7 +267,7 @@ def analyze_airfoil(camber, camber_pos, thickness, alpha_deg, aspect_ratio=12.0,
 # 5. MATH OPTIMIZER LOGIC
 # ----------------------------------------
 
-def optimize_airfoil_efficiency(init_camber, init_pos, init_thick, init_alpha, aspect_ratio=12.0, reynolds=1e6, min_cl_target=0.4):
+def optimize_airfoil_efficiency(init_camber, init_pos, init_thick, init_alpha, aspect_ratio=12.0, reynolds=1e6, min_cl_target=0.4, search_bounds=None):
     def loss_function(params):
         c, p, t, a = params
         metrics = analyze_airfoil(c, p, t, a, aspect_ratio, reynolds)
@@ -280,12 +280,13 @@ def optimize_airfoil_efficiency(init_camber, init_pos, init_thick, init_alpha, a
         metrics = analyze_airfoil(c, p, t, a, aspect_ratio, reynolds)
         return metrics['cl_nf'] - min_cl_target
 
-    search_bounds = [
-        (0.00, 0.06),  
-        (0.25, 0.60),  
-        (0.10, 0.18),  
-        (1.0,  8.0)    
-    ]
+    if search_bounds is None:
+        search_bounds = [
+            (0.00, 0.06),  
+            (0.25, 0.60),  
+            (0.10, 0.18),  
+            (1.0,  8.0)    
+        ]
     
     clamped_camber = np.clip(init_camber, search_bounds[0][0], search_bounds[0][1])
     clamped_pos = np.clip(init_pos, search_bounds[1][0], search_bounds[1][1])
@@ -356,18 +357,60 @@ if "opt_results" not in st.session_state:
 if "previous_inputs" not in st.session_state:
     st.session_state.previous_inputs = {}
 
+APP_PRESETS = {
+    "Custom (Manual Control)": {
+        "re": 1000000.0, "ar": 12.0, "cl_target": 0.40, "alpha_val": 4.0,
+        "thick_bounds": (10.0, 18.0), "thick_val": 12.0,
+        "camber_bounds": (0.0, 6.0), "camber_val": 2.0,
+        "pos_bounds": (25.0, 60.0), "pos_val": 40.0
+    },
+    "RC Planes": {
+        "re": 100000.0, "ar": 7.0, "cl_target": 0.30, "alpha_val": 3.0,
+        "thick_bounds": (10.0, 12.0), "thick_val": 10.5,
+        "camber_bounds": (0.0, 3.0), "camber_val": 1.5,
+        "pos_bounds": (25.0, 45.0), "pos_val": 35.0
+    },
+    "High-Performance Glider": {
+        "re": 500000.0, "ar": 20.0, "cl_target": 0.60, "alpha_val": 5.0,
+        "thick_bounds": (11.0, 14.0), "thick_val": 12.0,
+        "camber_bounds": (2.0, 5.0), "camber_val": 3.5,
+        "pos_bounds": (30.0, 50.0), "pos_val": 40.0
+    },
+    "General Aviation": {
+        "re": 1500000.0, "ar": 9.0, "cl_target": 0.45, "alpha_val": 4.0,
+        "thick_bounds": (12.0, 16.0), "thick_val": 14.0,
+        "camber_bounds": (1.0, 4.0), "camber_val": 2.0,
+        "pos_bounds": (35.0, 50.0), "pos_val": 40.0
+    },
+    "Commercial Airliner - Cruise": {
+        "re": 3000000.0, "ar": 10.0, "cl_target": 0.50, "alpha_val": 4.0,
+        "thick_bounds": (10.0, 13.0), "thick_val": 11.5,
+        "camber_bounds": (0.0, 3.0), "camber_val": 1.0,
+        "pos_bounds": (35.0, 55.0), "pos_val": 45.0
+    }
+}
+
 with st.sidebar:
+    st.markdown("### ✈️ Aircraft Application Target")
+    selected_preset = st.radio(
+        "Choose an aircraft profile preset:",
+        options=list(APP_PRESETS.keys()),
+        help="Selecting a configuration presets optimized slider ranges and flow conditions specialized for that category."
+    )
+    
+    config = APP_PRESETS[selected_preset]
+    
     st.markdown("### 🛠️ Airfoil Shape Parameters")
     
     aoa_deg = st.slider(
         "Angle of Attack (Degrees)", 
-        min_value=1.0, max_value=8.0, value=4.0, step=0.5,
+        min_value=1.0, max_value=8.0, value=config["alpha_val"], step=0.5,
         help="The angle between the oncoming air flow vector and the chord line axis."
     )
     
     camber_pct = st.slider(
         "Maximum Camber (%)", 
-        min_value=0.0, max_value=6.0, value=2.0, step=0.5,
+        min_value=config["camber_bounds"][0], max_value=config["camber_bounds"][1], value=config["camber_val"], step=0.5,
         help="The maximum distance between the mean camber line and the chord line, expressed as a percentage of the chord length."
     )
     camber_fraction = camber_pct / 100.0
@@ -381,7 +424,7 @@ with st.sidebar:
     if camber_pos_ref == "Leading Edge (Standard)":
         camber_pos_pct = st.slider(
             "Camber Position (%)", 
-            min_value=25.0, max_value=60.0, value=40.0, step=5.0,
+            min_value=config["pos_bounds"][0], max_value=config["pos_bounds"][1], value=config["pos_val"], step=5.0,
             help="The distance from the leading edge to the location of maximum camber, expressed as a percentage of the chord length."
         )
         camber_pos_fraction = camber_pos_pct / 100.0
@@ -395,7 +438,7 @@ with st.sidebar:
         
     thickness_pct = st.slider(
         "Maximum Thickness (%)", 
-        min_value=10.0, max_value=18.0, value=12.0, step=0.5, 
+        min_value=config["thick_bounds"][0], max_value=config["thick_bounds"][1], value=config["thick_val"], step=0.5, 
         help="The maximum height of the profile normal to the chord line, expressed as a percentage of the chord length."        
     )
     thickness_fraction = thickness_pct / 100.0
@@ -406,7 +449,7 @@ with st.sidebar:
         "Reynolds Number (Re)",
         min_value=1e5,
         max_value=3e6,
-        value=1e6,
+        value=config["re"],
         step=1e5,
         format="%e",
         help="A dimensionless parameter representing the ratio of inertial forces to viscous forces."
@@ -414,20 +457,28 @@ with st.sidebar:
     
     wing_ar = st.slider(
         "Wing Aspect Ratio (AR)", 
-        min_value=5.0, max_value=25.0, value=12.0, step=0.5,
+        min_value=5.0, max_value=25.0, value=config["ar"], step=0.5,
         help="The ratio of wing span to its mean chord length."
     )
     lift_constraint_target = st.slider(
         "Minimum Target Lift Coefficient (Cl)", 
-        min_value=0.1, max_value=0.8, value=0.4, step=0.05,
+        min_value=0.1, max_value=0.8, value=config["cl_target"], step=0.05,
         help="The solver must find a geometric shape that satisfies or exceeds this lift coefficient while simultaneously minimizing total drag."
     )
     
     trigger_optimization = st.button("Optimize this airfoil design")
 
+preset_search_bounds = [
+    (config["camber_bounds"][0] / 100.0, config["camber_bounds"][1] / 100.0),
+    (config["pos_bounds"][0] / 100.0 if camber_pos_ref == "Leading Edge (Standard)" else 0.25, config["pos_bounds"][1] / 100.0 if camber_pos_ref == "Leading Edge (Standard)" else 0.60),
+    (config["thick_bounds"][0] / 100.0, config["thick_bounds"][1] / 100.0),
+    (1.0, 8.0)
+]
+
 current_inputs = {
     "aoa": aoa_deg, "cam": camber_fraction, "pos": camber_pos_fraction, 
-    "thick": thickness_fraction, "re": reynolds_selection, "ar": wing_ar, "target": lift_constraint_target
+    "thick": thickness_fraction, "re": reynolds_selection, "ar": wing_ar, "target": lift_constraint_target,
+    "preset": selected_preset
 }
 
 if st.session_state.previous_inputs and st.session_state.previous_inputs != current_inputs:
@@ -440,7 +491,7 @@ active_analysis = analyze_airfoil(camber_fraction, camber_pos_fraction, thicknes
 if trigger_optimization:
     with st.spinner("Calculating optimal aerodynamic surfaces..."):
         st.session_state.opt_results = optimize_airfoil_efficiency(
-            camber_fraction, camber_pos_fraction, thickness_fraction, aoa_deg, wing_ar, reynolds_selection, min_cl_target=lift_constraint_target
+            camber_fraction, camber_pos_fraction, thickness_fraction, aoa_deg, wing_ar, reynolds_selection, min_cl_target=lift_constraint_target, search_bounds=preset_search_bounds
         )
 
 if st.session_state.opt_results:
@@ -448,7 +499,6 @@ if st.session_state.opt_results:
 else:
     display_col1, display_col2 = st.columns([2, 1])
 
-# Current Design Performance Stats
 with display_col1:
     st.markdown('<div class="section-title">Current Airfoil Metrics</div>', unsafe_allow_html=True)
     m_col1, m_col2 = st.columns(2)
@@ -488,7 +538,7 @@ with display_col1:
         </div>
         """, unsafe_allow_html=True)
         
-        naca_name_string = f"NACA {int(camber_fraction*100)}{int(camber_pos_fraction*10)}{int(thickness_fraction*100):02d}"
+        naca_name_string = f"NACA {int(round(camber_fraction*100))}{int(round(camber_pos_fraction*10))}{int(round(thickness_fraction*100)):02d}"
         st.markdown(f"""
         <div class="glass-card">
             <div class="metric-title">NACA Profile Code</div>
