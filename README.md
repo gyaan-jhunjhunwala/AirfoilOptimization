@@ -133,10 +133,3 @@ pip install -r requirements.txt
 ```bash
 streamlit run app.py
 ```
-
----
-
-## Author
-
-**Gyaan Jhunjhunwala**
-B.Tech Mechanical Engineering — MPSTME, Mumbai
