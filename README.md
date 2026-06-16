@@ -76,7 +76,7 @@ The **trend is consistent across both methods** — NACA 2311 produces lower Cd 
 ---
 
 ### Pressure Contour — NACA 2412
-![NACA 2412 Pressure Contour](assets/NACA 2412_Pressure Contour.png)
+![NACA 2412 Pressure Contour](assets/NACA_2412_Pressure_Contour.png)
 
 ### Pressure Contour — NACA 2311
 ![NACA 2311 Pressure Contour](assets/NACA_2311_Pressure_Contour.png)
