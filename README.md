@@ -136,39 +136,6 @@ streamlit run app.py
 
 ---
 
-## Tech Stack
-
-| Component | Tool |
-|---|---|
-| Web Framework | Streamlit |
-| Aerodynamic Solver | NeuralFoil (xlarge) |
-| Optimizer | SciPy SLSQP |
-| Geometry | NumPy (cosine-spaced NACA 4-digit) |
-| Thin Airfoil Theory | Custom Glauert integral implementation |
-| 3D CFD | ANSYS Fluent 2026 R1, k-ω SST |
-| CAD Geometry | Autodesk Fusion 360 (Python script) |
-| Mesh | ANSYS Meshing (unstructured + inflation) |
-| Post-Processing | ANSYS CFD-Post, Matplotlib |
-
----
-
-## Project Structure
-
-```
-├── app.py                  # Main Streamlit application
-├── requirements.txt        # Python dependencies
-├── assets/                 # CFD validation visuals
-│   ├── NACA_2412_Pressure_Contour.png
-│   ├── NACA_2411_Pressure_Contour.png
-│   ├── NACA_2412_Velocity_Streamlines.png
-│   ├── NACA_2311_Velocity_Streamlines.png
-│   ├── NACA2412_Cp_Distribution.png
-│   └── NACA2311_Cp_Distribution.png
-└── README.md
-```
-
----
-
 ## Author
 
 **Gyaan Jhunjhunwala**
