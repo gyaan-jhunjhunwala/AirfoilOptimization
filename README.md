@@ -171,6 +171,5 @@ streamlit run app.py
 
 ## Author
 
-**Gyaan**
+**Gyaan Jhunjhunwala**
 B.Tech Mechanical Engineering — MPSTME, Mumbai
-Specialization Interest: Aerodynamics & CFD | Structures & Materials
