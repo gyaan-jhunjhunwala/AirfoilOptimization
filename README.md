@@ -2,6 +2,8 @@
 This is an interactive Streamlit web application designed to compute, analyze, and optimize NACA 4-digit airfoil geometries using NeuralFoil.
 The dashboard integrates aerodynamic backends with mathematical optimization algorithms (SLSQP) to find ideal airfoil parameters for specific flight conditions in real-time.
 
+**Live App:** https://airfoil-optimization.streamlit.app/
+
 ## Features
 * **NEW! Aircraft Presets:** Domain-specific targets that automatically set realistic slider ranges and design parameters.  
 * **Dynamic Geometry Generation:** Live rendering of NACA 4-digit airfoils using cosine spacing for enhanced resolution at the leading and trailing edges.
